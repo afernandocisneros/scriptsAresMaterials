@@ -59,8 +59,9 @@ mkdir conformers
 for (( i=0; i<$conformers; i++ ))
 do
    mkdir conformers/conf_$i
-
-   echo "PM7 relscf=0.5 gnorm=0.5 polar dipole opt" > conformers/conf_$i/conf_$i.mop
+   
+   #relscf=1.0
+   echo "PM7 THREADS=2 gnorm=10 polar dipole opt" > conformers/conf_$i/conf_$i.mop
    echo "Semiempirical calculation" >> conformers/conf_$i/conf_$i.mop
    echo " " >> conformers/conf_$i/conf_$i.mop
  
@@ -486,7 +487,7 @@ echo "* xyzfile 0 1 conf_minHeatForm.xyz"                         >> orca_confor
 
 # Orca 5.0
 cd orca_conformer-$c
-$HOME/orca5.0/orca minE_c-$c.inp > minE_c-$c.out &
+#$HOME/orca5.0/orca minE_c-$c.inp > minE_c-$c.out &
 
 #------------------------------------#
 # Validation of geometry consistency #
