@@ -8,20 +8,20 @@
 # obabel -i smi *.smi -o xyz -O input.xyz --gen3d
 
 # Genetic Algorithm
-obabel input.xyz -O conformers_ga.xyz --conformer --nconf 50 --ff --score energy --writeconformers > geneticAlgorithm.txt
+obabel input.xyz -O conformers_ga.xyz --conformer --nconf 100 --ff --score energy --writeconformers > geneticAlgorithm.txt
 
 # Oconformer for generate random conformers using a Monte Carlo search
 # Usage: obconformer NSteps GeomOptSteps <file> [forcefield]
 # obconformer #ofconformers #ofoptimizationsteps filename 
-# obconformer 1000 100 input.xyz > obconformer.xyz
-# sed -i 's/^$/input.xyz/g' obconformer.xyz
+obconformer 1000 100 input.xyz > obconformer.xyz
+sed -i 's/^$/input.xyz/g' obconformer.xyz
 
 # Confab
 obabel input.xyz -O conformers_confab.xyz --confab --conf 100000 --orignal --rcutoff 1.0 --ecutoff 100 --writeconformers > confab_output.txt
 
 # Union conformers coordinates 
 cat conformers_ga.xyz      > conformers.xyz
-#cat obconformer.xyz       >> conformers.xyz
+cat obconformer.xyz       >> conformers.xyz
 cat conformers_confab.xyz >> conformers.xyz
 
 # Count number of conformers generated
@@ -309,6 +309,8 @@ gnuplot plot_Heat_vs_Conformer.gnu
 cd ..
 
 # -------------------------------------------------------------------------------------------------- #
+#                                       Average of properties                                        #
+# -------------------------------------------------------------------------------------------------- #
 
 sum_CosVol=0.0	
 sum_homo=0.0	
@@ -351,104 +353,170 @@ mv conformers/*.txt conformers/plot_properties
 mv conformers/*.gnu conformers/plot_properties
 cp conformers/plot_properties/heatVSconf.txt conformers
 
+
 #---------------#
 #  Mopac-MinE   #  
 #---------------#
 
 echo ""
-echo "#--------------------------------#"
-echo "   Mopac conformer minimum energy "
-echo "#--------------------------------#"
+echo "# --------------------------------------------- #"
+echo "    Mopac: Conformer Minimum Heat of Formation   "
+echo "# --------------------------------------------- #"
 echo ""
 
-# Index of minimum electronic energy conformer
-# c=$(sort -k2 -n conformers/energyVSconf.txt | head -n 1 | awk '{print $1}')
-
 # Index of minimum heat of formation conformer
-c=$(sort -k2 -n conformers/heatVSconf.txt | head -n 1 | awk '{print $1}')
+c_heat=$(sort -k2 -n conformers/heatVSconf.txt | head -n 1 | awk '{print $1}')
 
-cosVol_minC=$(cat conformers/conf_$c/conf_$c.out | grep 'COSMO VOLUME' | awk '{print $4}')
-homo_minC=$(cat conformers/conf_$c/conf_$c.out | grep 'HOMO' | awk '{print $6}')
-lumo_minC=$(cat conformers/conf_$c/conf_$c.out | grep 'LUMO' | awk '{print $7}')
-polar_minC=$(cat conformers/conf_$c/conf_$c.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')
-dipole_minC=$(cat conformers/conf_$c/conf_$c.out | grep 'SUM' | awk '{print $5}')
-energy_minC=$(cat conformers/conf_$c/conf_$c.out | grep "TOTAL ENERGY" | awk '{print $4}')
-heat_minC=$(cat conformers/conf_$c/conf_$c.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}')
+cosVol_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep 'COSMO VOLUME' | awk '{print $4}')
+homo_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep 'HOMO' | awk '{print $6}')
+lumo_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep 'LUMO' | awk '{print $7}')
+polar_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')
+dipole_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep 'SUM' | awk '{print $5}')
+energy_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep "TOTAL ENERGY" | awk '{print $4}')
+heat_minC_Heat=$(cat conformers/conf_$c_heat/conf_$c_heat.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}')
 
 
-fA=$(cat -n conformers/conf_$c/conf_$c.out | grep "                            CARTESIAN COORDINATES" | awk '{print $1}')
+fA=$(cat -n conformers/conf_$c_heat/conf_$c_heat.out | grep "                            CARTESIAN COORDINATES" | awk '{print $1}')
 
 firstAtom=$((fA+2))
 lastAtom=$( echo "$firstAtom+$ato" | bc -l )
 #lastAtom=$((firstAtom+ato))
 
-sed -n "$firstAtom, $lastAtom p" conformers/conf_$c/conf_$c.out >> temporal.txt
+sed -n "$firstAtom, $lastAtom p" conformers/conf_$c_heat/conf_$c_heat.out >> temporal.txt
 cat temporal.txt | awk '{print $2 "          " $3 "   " $4 "   " $5}' >> conf_minHeatForm.xyz
 rm temporal.txt
 
-mkdir conf_$c-MopacMinE
+mkdir conf_$c_heat-MopacMinE
 
 # Polarizability
-echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c-MopacMinE/conf_$c-minE-polar.mop
-echo "Semiempirical Calculation" >> conf_$c-MopacMinE/conf_$c-minE-polar.mop
-echo " "                         >> conf_$c-MopacMinE/conf_$c-minE-polar.mop
-cat conf_minHeatForm.xyz         >> conf_$c-MopacMinE/conf_$c-minE-polar.mop
-/opt/mopac/MOPAC2016.exe conf_$c-MopacMinE/conf_$c-minE-polar.mop
+echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
+echo "Semiempirical Calculation" >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
+echo " "                         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
+cat conf_minHeatForm.xyz         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
+/opt/mopac/MOPAC2016.exe conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
+
+# Thermodynamics and Frequencies 
+echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
+echo "Semiempirical Calculation" >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
+echo " "                         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
+cat conf_minHeatForm.xyz         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
+/opt/mopac/MOPAC2016.exe conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
+
+cosVol_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
+homo_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
+lumo_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
+polar_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
+dipole_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
+energy_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
+heat_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}') 
 
 
-cosVol_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
-homo_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
-lumo_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
-polar_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
-dipole_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
-energy_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
-heat_min=$(cat conf_$c-MopacMinE/conf_$c-minE-polar.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}') 
+echo ""
+echo "# --------------------------------------------- #"
+echo "      Mopac: Conformer Minimum Total Energy      "
+echo "# --------------------------------------------- #"
+echo ""
+
+# Index of minimum electronic energy conformer
+c_total=$(sort -k2 -n conformers/energyVSconf.txt | head -n 1 | awk '{print $1}')
+
+cosVol_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep 'COSMO VOLUME' | awk '{print $4}')
+homo_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep 'HOMO' | awk '{print $6}')
+lumo_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep 'LUMO' | awk '{print $7}')
+polar_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')
+dipole_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep 'SUM' | awk '{print $5}')
+energy_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep "TOTAL ENERGY" | awk '{print $4}')
+heat_minC_Total=$(cat conformers/conf_$c_total/conf_$c_total.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}')
 
 
-echo "#Property                              Mean                MinimumEnergy           MinimunEnergy (PREC)"     >  propConfPM7_Mean-Min.txt
+fA=$(cat -n conformers/conf_$c_total/conf_$c_total.out | grep "                            CARTESIAN COORDINATES" | awk '{print $1}')
+
+firstAtom=$((fA+2))
+lastAtom=$( echo "$firstAtom+$ato" | bc -l )
+#lastAtom=$((firstAtom+ato))
+
+sed -n "$firstAtom, $lastAtom p" conformers/conf_$c_total/conf_$c_total.out >> temporal.txt
+cat temporal.txt | awk '{print $2 "          " $3 "   " $4 "   " $5}' >> conf_minHeatForm.xyz
+rm temporal.txt
+
+mkdir conf_$c_total-MopacMinE
+
+# Polarizability
+echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
+echo "Semiempirical Calculation" >> conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
+echo " "                         >> conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
+cat conf_minHeatForm.xyz         >> conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
+/opt/mopac/MOPAC2016.exe conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
+
+# Thermodynamics and Frequencies 
+echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
+echo "Semiempirical Calculation" >> conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
+echo " "                         >> conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
+cat conf_minHeatForm.xyz         >> conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
+
+cosVol_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
+homo_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
+lumo_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
+polar_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
+dipole_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
+energy_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
+
+
+# --------------------------------------------------- #
+# --- Recolection of Quantum Chemical Descriptors --- #
+# --------------------------------------------------- #
+
+echo "#Property                              Mean                MinE_Heat (gnorm=10)           MinE_Heat (gnorm0.01)        MinE_Total (gnorm=10)     MinE_Total (gnorm=0.01)"     >  propConfPM7_Mean-Min.txt
 
 echo -n "Cosmo Volume (ANG**3)               " >> propConfPM7_Mean-Min.txt
 echo -n $cosVol_mean "                "        >> propConfPM7_Mean-Min.txt
-echo -n $cosVol_minC "                "        >> propConfPM7_Mean-Min.txt
-echo $cosVol_min                               >> propConfPM7_Mean-Min.txt
+echo -n $cosVol_minC_Heat  "               "   >> propConfPM7_Mean-Min.txt
+echo -n $cosVol_minHeat    "               "   >> propConfPM7_Mean-Min.txt
+echo -n $cosVol_minC_Total "               "   >> propConfPM7_Mean-Min.txt
+echo $cosVol_minTotoal     "               "   >> propConfPM7_Mean-Min.txt
 
 echo -n "HOMO Energy (eV)                    " >> propConfPM7_Mean-Min.txt
 echo -n $homo_mean   "                "        >> propConfPM7_Mean-Min.txt
-echo $homo_min       "                "        >> propConfPM7_Mean-Min.txt
-echo $homo_min                                 >> propConfPM7_Mean-Min.txt
+echo -n $homo_minC_Heat    "                "  >> propConfPM7_Mean-Min.txt
+echo -n $homo_minHeat      "                "  >> propConfPM7_Mean-Min.txt
+echo -n $homo_minC_Total   "                "  >> propConfPM7_Mean-Min.txt
+echo $homo_minTotal                            >> propConfPM7_Mean-Min.txt
 
 echo -n "LUMO Energy (eV)                   "  >> propConfPM7_Mean-Min.txt
 echo -n $lumo_mean   "                 "       >> propConfPM7_Mean-Min.txt
-echo -n $lumo_minC   "                 "       >> propConfPM7_Mean-Min.txt
-echo $lumo_min                                 >> propConfPM7_Mean-Min.txt
+echo -n $lumo_minC_Heat    "                "  >> propConfPM7_Mean-Min.txt
+echo -n $lumo_minHeat      "                "  >> propConfPM7_Mean-Min.txt
+echo -n $lumo_minC_Total   "                "  >> propConfPM7_Mean-Min.txt
+echo $lumo_minTotal                            >> propConfPM7_Mean-Min.txt
 
 echo -n "Polarizability (ANG**3)            "  >> propConfPM7_Mean-Min.txt
 echo -n $polar_mean "                 "        >> propConfPM7_Mean-Min.txt
-echo -n $polar_minC "                 "        >> propConfPM7_Mean-Min.txt
-echo $polar_min                                >> propConfPM7_Mean-Min.txt
+echo -n $polar_minC_Heat   "                "  >> propConfPM7_Mean-Min.txt
+echo -n $polar_minHeat     "                "  >> propConfPM7_Mean-Min.txt
+echo -n $polar_minC_Total  "                "  >> propConfPM7_Mean-Min.txt
+echo $polar_minHeat                            >> propConfPM7_Mean-Min.txt
 
 echo -n "Dipole Moment (Debye)              "  >> propConfPM7_Mean-Min.txt
 echo -n $dipole_mean "                  "      >> propConfPM7_Mean-Min.txt
-echo -n $dipole_minC "                  "      >> propConfPM7_Mean-Min.txt
-echo $dipole_min                               >> propConfPM7_Mean-Min.txt
+echo -n $dipole_minC_Heat  "                 " >> propConfPM7_Mean-Min.txt
+echo -n $dipole_minHeat    "                 " >> propConfPM7_Mean-Min.txt
+echo -n $dipole_minC_Total "                 " >> propConfPM7_Mean-Min.txt
+echo $dipole_minTotal                          >> propConfPM7_Mean-Min.txt
 
 echo -n "Total Energy (a.u.)                "  >> propConfPM7_Mean-Min.txt
 echo -n $energy_mean "           "             >> propConfPM7_Mean-Min.txt
-echo -n $energy_minC "           "             >> propConfPM7_Mean-Min.txt
-echo $energy_min                               >> propConfPM7_Mean-Min.txt
+echo -n $energy_minC_Heat  "                "  >> propConfPM7_Mean-Min.txt
+echo -n $energy_minHeat    "                "  >> propConfPM7_Mean-Min.txt
+echo -n $energy_minC_Total "                "  >> propConfPM7_Mean-Min.txt
+echo $energy_minTotal                          >> propConfPM7_Mean-Min.txt
 
 echo -n "Heat of Formation (Kcal/mol)       "  >> propConfPM7_Mean-Min.txt
 echo -n $heat_mean   "                "        >> propConfPM7_Mean-Min.txt
-echo -n $heat_minC   "                "        >> propConfPM7_Mean-Min.txt
-echo $heat_min                                 >> propConfPM7_Mean-Min.txt
+echo -n $heat_minC_Heat    "                "  >> propConfPM7_Mean-Min.txt
+echo -n $heat_minHeat      "                "  >> propConfPM7_Mean-Min.txt
+echo -n $heat_minC_Total   "                "  >> propConfPM7_Mean-Min.txt
+echo $heat_minTotal                            >> propConfPM7_Mean-Min.txt
 
-
-# Thermodynamics and Frequencies 
-echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c-MopacMinE/conf_$c-minE-thermo.mop
-echo "Semiempirical Calculation" >> conf_$c-MopacMinE/conf_$c-minE-thermo.mop
-echo " "                         >> conf_$c-MopacMinE/conf_$c-minE-thermo.mop
-cat conf_minHeatForm.xyz         >> conf_$c-MopacMinE/conf_$c-minE-thermo.mop
-/opt/mopac/MOPAC2016.exe conf_$c-MopacMinE/conf_$c-minE-thermo.mop
 
 
 #---------------#
