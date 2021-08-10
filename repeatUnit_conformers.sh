@@ -8,16 +8,16 @@
 # obabel -i smi *.smi -o xyz -O input.xyz --gen3d
 
 # Genetic Algorithm
-obabel input.xyz -O conformers_ga.xyz --conformer --nconf 100 --ff --score energy --writeconformers > geneticAlgorithm.txt
+obabel input.xyz -O conformers_ga.xyz --conformer --nconf 3 --ff --score energy --writeconformers > geneticAlgorithm.txt
 
 # Oconformer for generate random conformers using a Monte Carlo search
 # Usage: obconformer NSteps GeomOptSteps <file> [forcefield]
 # obconformer #ofconformers #ofoptimizationsteps filename 
-obconformer 1000 100 input.xyz > obconformer.xyz
+obconformer 10 100 input.xyz > obconformer.xyz
 sed -i 's/^$/input.xyz/g' obconformer.xyz
 
 # Confab
-obabel input.xyz -O conformers_confab.xyz --confab --conf 100000 --orignal --rcutoff 1.0 --ecutoff 100 --writeconformers > confab_output.txt
+obabel input.xyz -O conformers_confab.xyz --confab --conf 100 --orignal --rcutoff 1.0 --ecutoff 100 --writeconformers > confab_output.txt
 
 # Union conformers coordinates 
 cat conformers_ga.xyz      > conformers.xyz
@@ -126,7 +126,7 @@ echo "set ylabel 'Cosmo Volume (ANG**3)'"   >> conformers/plot_cosmoVolume_vs_Co
 echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8"   >> conformers/plot_cosmoVolume_vs_Conformer.gnu
 echo "set grid"                             >> conformers/plot_cosmoVolume_vs_Conformer.gnu
 echo "unset key"                            >> conformers/plot_cosmoVolume_vs_Conformer.gnu
-echo "plot 'cosmoVolumeVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_cosmoVolume_vs_Conformer.gnu
+echo "plot 'cosmoVolumeVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_cosmoVolume_vs_Conformer.gnu
 echo " "                                    >> conformers/plot_cosmoVolume_vs_Conformer.gnu
 echo "unset xtics"                          >> conformers/plot_cosmoVolume_vs_Conformer.gnu
 echo "set xlabel 'Cosmo Volume (ANG**3)'"   >> conformers/plot_cosmoVolume_vs_Conformer.gnu
@@ -152,7 +152,7 @@ echo "set ylabel 'HOMO Energy (eV)'"        >> conformers/plot_homoE_vs_Conforme
 echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8"   >> conformers/plot_homoE_vs_Conformer.gnu
 echo "set grid"                             >> conformers/plot_homoE_vs_Conformer.gnu
 echo "unset key"                            >> conformers/plot_homoE_vs_Conformer.gnu
-echo "plot 'homoVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_homoE_vs_Conformer.gnu
+echo "plot 'homoVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_homoE_vs_Conformer.gnu
 echo " "                                    >> conformers/plot_homoE_vs_Conformer.gnu
 echo "unset xtics"                          >> conformers/plot_homoE_vs_Conformer.gnu
 echo "set xlabel 'HOMO Energy (eV)'"        >> conformers/plot_homoE_vs_Conformer.gnu
@@ -178,7 +178,7 @@ echo "set ylabel 'LUMO Energy (eV)'"        >> conformers/plot_lumoE_vs_Conforme
 echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8"   >> conformers/plot_lumoE_vs_Conformer.gnu
 echo "set grid"                             >> conformers/plot_lumoE_vs_Conformer.gnu
 echo "unset key"                            >> conformers/plot_lumoE_vs_Conformer.gnu
-echo "plot 'lumoVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_lumoE_vs_Conformer.gnu
+echo "plot 'lumoVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_lumoE_vs_Conformer.gnu
 echo " "                                    >> conformers/plot_lumoE_vs_Conformer.gnu
 echo "unset xtics"                          >> conformers/plot_lumoE_vs_Conformer.gnu
 echo "set xlabel 'LUMO Energy (eV)'"        >> conformers/plot_lumoE_vs_Conformer.gnu
@@ -205,7 +205,7 @@ echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8" >> conformers/plot_Alp
 echo "set ytics font ',10'"                   >> conformers/plot_Alpha_vs_Conformer.gnu
 echo "set grid"                               >> conformers/plot_Alpha_vs_Conformer.gnu
 echo "unset key"                              >> conformers/plot_Alpha_vs_Conformer.gnu
-echo "plot 'alphaVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_Alpha_vs_Conformer.gnu
+echo "plot 'alphaVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_Alpha_vs_Conformer.gnu
 echo " "                                      >> conformers/plot_Alpha_vs_Conformer.gnu
 echo "unset xtics"                            >> conformers/plot_Alpha_vs_Conformer.gnu
 echo "set xlabel 'Polarizability (ANG.**3)'"  >> conformers/plot_Alpha_vs_Conformer.gnu
@@ -231,7 +231,7 @@ echo "set ylabel 'Dipole Moment (Debye)'"        >> conformers/plot_dipole_vs_Co
 echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8" >> conformers/plot_dipole_vs_Conformer.gnu
 echo "set grid"                                  >> conformers/plot_dipole_vs_Conformer.gnu
 echo "unset key"                                 >> conformers/plot_dipole_vs_Conformer.gnu
-echo "plot 'dipoleMomentVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_dipole_vs_Conformer.gnu
+echo "plot 'dipoleMomentVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_dipole_vs_Conformer.gnu
 echo " "                                         >> conformers/plot_dipole_vs_Conformer.gnu
 echo "unset xtics"                               >> conformers/plot_dipole_vs_Conformer.gnu
 echo "set xlabel 'Dipole Moment (Debye)'"        >> conformers/plot_dipole_vs_Conformer.gnu
@@ -257,7 +257,7 @@ echo "set ylabel 'Total Energy (eV)'"     >> conformers/plot_Energy_vs_Conformer
 echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8" >> conformers/plot_Energy_vs_Conformer.gnu
 echo "set grid"                           >> conformers/plot_Energy_vs_Conformer.gnu
 echo "unset key"                          >> conformers/plot_Energy_vs_Conformer.gnu
-echo "plot 'energyVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_Energy_vs_Conformer.gnu
+echo "plot 'energyVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_Energy_vs_Conformer.gnu
 echo " "                                  >> conformers/plot_Energy_vs_Conformer.gnu
 echo "unset xtics"                        >> conformers/plot_Energy_vs_Conformer.gnu
 echo "set xlabel 'Total Energy (eV)'"     >> conformers/plot_Energy_vs_Conformer.gnu
@@ -283,7 +283,7 @@ echo "set ylabel 'Heat of Formation (Kcal/mol)'" >> conformers/plot_Heat_vs_Conf
 echo "set xtics 5 font ',8' rotate by 80 offset 0.0,-0.8" >> conformers/plot_Heat_vs_Conformer.gnu
 echo "set grid"                                  >> conformers/plot_Heat_vs_Conformer.gnu
 echo "unset key"                                 >> conformers/plot_Heat_vs_Conformer.gnu
-echo "plot 'heatVSconf.txt' u 1:2 w lp pt 7 ps 0.5 lc rgb 'blue'" >> conformers/plot_Heat_vs_Conformer.gnu
+echo "plot 'heatVSconf.txt' u 1:2 w lp pt 7 ps 0.2 lc rgb 'blue'" >> conformers/plot_Heat_vs_Conformer.gnu
 echo " "                                         >> conformers/plot_Heat_vs_Conformer.gnu
 echo "unset xtics"                               >> conformers/plot_Heat_vs_Conformer.gnu
 echo "set xlabel 'Heat of Formation (Kcal/mol)'" >> conformers/plot_Heat_vs_Conformer.gnu
@@ -352,6 +352,7 @@ mv conformers/*.eps conformers/plot_properties
 mv conformers/*.txt conformers/plot_properties
 mv conformers/*.gnu conformers/plot_properties
 cp conformers/plot_properties/heatVSconf.txt conformers
+cp conformers/plot_properties/energyVSconf.txt conformers
 
 
 #---------------#
@@ -386,29 +387,29 @@ sed -n "$firstAtom, $lastAtom p" conformers/conf_$c_heat/conf_$c_heat.out >> tem
 cat temporal.txt | awk '{print $2 "          " $3 "   " $4 "   " $5}' >> conf_minHeatForm.xyz
 rm temporal.txt
 
-mkdir conf_$c_heat-MopacMinE
+mkdir conf_$c_heat-MopacMinE-Heat
 
 # Polarizability
-echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
-echo "Semiempirical Calculation" >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
-echo " "                         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
-cat conf_minHeatForm.xyz         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
-/opt/mopac/MOPAC2016.exe conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.mop
+echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.mop
+echo "Semiempirical Calculation" >> conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.mop
+echo " "                         >> conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.mop
+cat conf_minHeatForm.xyz         >> conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.mop
+/opt/mopac/MOPAC2016.exe conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.mop
 
 # Thermodynamics and Frequencies 
-echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
-echo "Semiempirical Calculation" >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
-echo " "                         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
-cat conf_minHeatForm.xyz         >> conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
-/opt/mopac/MOPAC2016.exe conf_$c_heat-MopacMinE/conf_$c_heat-minE-thermo.mop
+echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-thermo.mop
+echo "Semiempirical Calculation" >> conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-thermo.mop
+echo " "                         >> conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-thermo.mop
+cat conf_minHeatForm.xyz         >> conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-thermo.mop
+/opt/mopac/MOPAC2016.exe conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-thermo.mop
 
-cosVol_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
-homo_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
-lumo_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
-polar_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
-dipole_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
-energy_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
-heat_minHeat=$(cat conf_$c_heat-MopacMinE/conf_$c_heat-minE-polar.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}') 
+cosVol_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
+homo_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
+lumo_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
+polar_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
+dipole_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
+energy_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
+heat_minHeat=$(cat conf_$c_heat-MopacMinE-Heat/conf_$c_heat-minE-polar.out | grep "FINAL HEAT OF FORMATION" | awk '{print $6}') 
 
 
 echo ""
@@ -436,30 +437,31 @@ lastAtom=$( echo "$firstAtom+$ato" | bc -l )
 #lastAtom=$((firstAtom+ato))
 
 sed -n "$firstAtom, $lastAtom p" conformers/conf_$c_total/conf_$c_total.out >> temporal.txt
-cat temporal.txt | awk '{print $2 "          " $3 "   " $4 "   " $5}' >> conf_minHeatForm.xyz
+cat temporal.txt | awk '{print $2 "          " $3 "   " $4 "   " $5}' >> conf_minETotal.xyz
 rm temporal.txt
 
-mkdir conf_$c_total-MopacMinE
+mkdir conf_$c_total-MopacMinETotal
 
 # Polarizability
-echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
-echo "Semiempirical Calculation" >> conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
-echo " "                         >> conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
-cat conf_minHeatForm.xyz         >> conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
-/opt/mopac/MOPAC2016.exe conf_$c_total-MopacMinE/conf_$c_total-minE-polar.mop
+echo "PM7 relscf=0.01 gnorm=0.01 dipole polar mullik aux graph graphf gradients opt" > conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.mop
+echo "Semiempirical Calculation" >> conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.mop
+echo " "                         >> conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.mop
+cat conf_minETotal.xyz           >> conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.mop
+/opt/mopac/MOPAC2016.exe conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.mop
 
 # Thermodynamics and Frequencies 
-echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
-echo "Semiempirical Calculation" >> conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
-echo " "                         >> conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
-cat conf_minHeatForm.xyz         >> conf_$c_total-MopacMinE/conf_$c_total-minE-thermo.mop
+echo "PM7 relscf=0.01 gnorm=0.01 thermo opt force" > conf_$c_total-MopacMinETotal/conf_$c_total-minE-thermo.mop
+echo "Semiempirical Calculation" >> conf_$c_total-MopacMinETotal/conf_$c_total-minE-thermo.mop
+echo " "                         >> conf_$c_total-MopacMinETotal/conf_$c_total-minE-thermo.mop
+cat conf_minETotal.xyz           >> conf_$c_total-MopacMinETotal/conf_$c_total-minE-thermo.mop
+/opt/mopac/MOPAC2016.exe conf_$c_total-MopacMinETotal/conf_$c_total-minE-thermo.mop
 
-cosVol_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
-homo_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
-lumo_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
-polar_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
-dipole_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
-energy_minTotal=$(cat conf_$c_total-MopacMinE/conf_$c_total-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
+cosVol_minTotal=$(cat conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.out | grep 'COSMO VOLUME' | awk '{print $4}')           
+homo_minTotal=$(cat conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.out | grep 'HOMO' | awk '{print $6}')                       
+lumo_minTotal=$(cat conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.out | grep 'LUMO' | awk '{print $7}')                    
+polar_minTotal=$(cat conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.out | grep 'ISOTROPIC' | tail -1 | awk '{print $8}')     
+dipole_minTotal=$(cat conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.out | grep 'SUM' | awk '{print $5}')                     
+energy_minTotal=$(cat conf_$c_total-MopacMinETotal/conf_$c_total-minE-polar.out | grep "TOTAL ENERGY" | awk '{print $4}')            
 
 
 # --------------------------------------------------- #
@@ -523,39 +525,46 @@ echo $heat_minTotal                            >> propConfPM7_Mean-Min.txt
 #     Orca      #  
 #---------------#
 
-mkdir orca_conformer-$c 
-sed -i "1s/^/$atoms\n\n/" conf_minHeatForm.xyz
-cp conf_minHeatForm.xyz orca_conformer-$c
+mkdir orca_conformer-$c_total 
 
-echo "# Orca calculation" > orca_conformer-$c/minE_c-$c.inp
+# Conformer of Minimum Heat of Formation (PM7) 
+sed -i "1s/^/$atoms\n\n/" conf_minHeatForm.xyz
+cp conf_minHeatForm.xyz orca_conformer-$c_total
+
+# Conformer of Minimum Total Energy (PM7)
+sed -i "1s/^/$atoms\n\n/" conf_minETotal.xyz
+cp conf_minETotal.xyz orca_conformer-$c_total
+
+echo "# Orca calculation" > orca_conformer-$c_total/minE_c-$c_total.inp
 #
 # Orca 4.2
 #echo "! B3LYP 6-31++G** Grid5 FinalGrid6 TightSCF TightOpt D3ZERO Opt Freq" >> orca/minenergyConformer.inp
 #echo "! B3LYP 6-31++G** Grid4 FinalGrid5 TightSCF TightOpt Opt Freq" >> orca/minenergyConformer.inp
 #
 # Orca 5.0
-echo "! B3LYP 6-31++G** defgrid2 TightSCF TightOpt D3BJ Opt Freq" >> orca_conformer-$c/minE_c-$c.inp
-echo " "                                                          >> orca_conformer-$c/minE_c-$c.inp
-echo "# Number of procs and memory per core"                      >> orca_conformer-$c/minE_c-$c.inp
-echo "%maxcore 2000"                                              >> orca_conformer-$c/minE_c-$c.inp
-echo "%pal"                                                       >> orca_conformer-$c/minE_c-$c.inp
-echo "   nprocs 6"                                                >> orca_conformer-$c/minE_c-$c.inp
-echo "end"                                                        >> orca_conformer-$c/minE_c-$c.inp
-echo "  "                                                         >> orca_conformer-$c/minE_c-$c.inp
-echo "# Polarizability"                                           >> orca_conformer-$c/minE_c-$c.inp
-echo "%elprop"                                                    >> orca_conformer-$c/minE_c-$c.inp
-echo "   Polar 1 "                                                >> orca_conformer-$c/minE_c-$c.inp
-echo "end"                                                        >> orca_conformer-$c/minE_c-$c.inp
-echo "  "                                                         >> orca_conformer-$c/minE_c-$c.inp
-echo "# Cartesian Coordinates in Angstroms"                       >> orca_conformer-$c/minE_c-$c.inp
-echo "* xyzfile 0 1 conf_minHeatForm.xyz"                         >> orca_conformer-$c/minE_c-$c.inp
+echo "! B3LYP 6-31++G** defgrid2 TightSCF TightOpt D3BJ Opt Freq" >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo " "                                                          >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "# Number of procs and memory per core"                      >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "%maxcore 2000"                                              >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "%pal"                                                       >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "   nprocs 6"                                                >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "end"                                                        >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "  "                                                         >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "# Polarizability"                                           >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "%elprop"                                                    >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "   Polar 1 "                                                >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "end"                                                        >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "  "                                                         >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "# Cartesian Coordinates in Angstroms"                       >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "* xyzfile 0 1 conf_minHeatForm.xyz"                         >> orca_conformer-$c_total/minE_c-$c_total.inp
+echo "* xyzfile 0 1 conf_minETotal.xyz"                           >> orca_conformer-$c_total/minE_c-$c_total.inp
 
 # Orca 4.2
 #$HOME/Orca4.2/orca_4_2_1_linux_x86-64_openmpi314/orca orca/minenergyConformer_$c.inp > orca/minenergyConformer_$c.out &
 
 # Orca 5.0
-cd orca_conformer-$c
-#$HOME/orca5.0/orca minE_c-$c.inp > minE_c-$c.out &
+cd orca_conformer-$c_total
+#$HOME/orca5.0/orca minE_c-$c_total.inp > minE_c-$c_total.out &
 
 #------------------------------------#
 # Validation of geometry consistency #
